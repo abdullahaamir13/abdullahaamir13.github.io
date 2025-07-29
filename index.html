@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abdullah Aamir - WordPress Developer Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: rgb(0, 0, 0);
+            color: rgb(255, 255, 255);
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 80px;
+            background-color: #333333;
+            padding: 0 20px;
+        }
+
+        .nav-left {
+            font-size: 1.5rem;
+        }
+
+        .nav-right ul {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-right ul li {
+            margin: 0 15px;
+        }
+
+        .nav-right ul li a {
+            text-decoration: none;
+            color: rgb(255, 255, 255);
+        }
+
+        .nav-right ul li a:hover {
+            color: #20C997;
+        }
+
+        .menu-toggle {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .nav-left {
+                flex: 1;
+                text-align: center;
+            }
+
+            .nav-right {
+                position: absolute;
+                top: 80px;
+                left: 0;
+                width: 100%;
+                background-color: #333333;
+                display: none;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav-right ul {
+                flex-direction: column;
+                width: 100%;
+                padding: 0;
+            }
+
+            .nav-right ul li {
+                width: 100%;
+                text-align: center;
+                margin: 10px 0;
+            }
+
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        main hr {
+            border: 0;
+            background: #333333;
+            height: 1.2px;
+            margin: 40px 84px;
+        }
+
+        .firstSection {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 130px 0;
+            flex-wrap: wrap;
+        }
+
+        .firstSection>div {
+            width: 30%;
+        }
+
+        .leftSection {
+            font-size: 2rem;
+        }
+
+        .buttons {
+            justify-content: space-around;
+            margin-top: 25px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 5px 20px;
+            font-size: 18px;
+            background: #20C997;
+            color: #ffffff;
+            border: 2px solid white;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            color: #ffffff;
+            background-color: #179e77;
+        }
+
+        .btn:hover,
+        .btn:focus,
+        .btn:active {
+            text-decoration: none;
+        }
+
+        .rightSection img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .blue {
+            color: #20C997;
+        }
+
+        .textGray {
+            color: #ffffff69;
+        }
+
+        #element {
+            color: #20C997;
+        }
+
+        .secondSection,
+        .aboutSection {
+            max-width: 80vw;
+            margin: auto;
+            padding-bottom: 20px;
+        }
+
+        .job {
+            margin: 20px 0;
+        }
+
+        .job-title {
+            font-size: 1.5rem;
+            color: #20C997;
+        }
+
+        .job-duration {
+            font-size: 1rem;
+            color: #ffffff69;
+        }
+
+        .job-description {
+            font-size: 1rem;
+            color: #ffffff;
+        }
+
+        footer {
+            background-color: #333333;
+            padding: 10px 0;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+            padding: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .footer>div {
+            flex: 1;
+            padding: 0 15px;
+            text-align: center;
+        }
+
+        .footer ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer ul li {
+            margin: 10px 0;
+        }
+
+        .footer ul li a {
+            text-decoration: none;
+            color: rgb(255, 255, 255);
+        }
+
+        .footer ul li a:hover {
+            color: #20C997;
+        }
+
+        .footer-rights {
+            text-align: center;
+            color: #ffffff69;
+            margin-top: 20px;
+        }
+
+        h2,
+        h3 {
+            color: #20C997;
+        }
+
+        .aboutSection p,
+        .aboutSection ul {
+            color: #ffffff;
+            margin: 10px 0;
+        }
+
+        .aboutSection ul {
+            list-style: disc;
+            padding-left: 20px;
+        }
+
+        .aboutSection ul li {
+            margin: 5px 0;
+        }
+
+        .contactSection {
+            max-width: 80vw;
+            margin: auto;
+            padding: 20px 0;
+        }
+
+        .contactSection form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .contactSection label {
+            font-size: 1rem;
+            color: #20C997;
+        }
+
+        .contactSection input,
+        .contactSection textarea {
+            padding: 10px;
+            border: 1px solid #20C997;
+            border-radius: 5px;
+            background: #333333;
+            color: #fff;
+            width: 100%;
+        }
+
+        .contactSection button {
+            align-self: flex-start;
+            padding: 10px 20px;
+            background: #20C997;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .firstSection>div {
+                width: 80%;
+                margin: 20px 0;
+            }
+
+            .footer {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .footer>div {
+                width: 100%;
+                text-align: center;
+                margin: 10px 0;
+            }
+
+            .contactSection form {
+                width: 100%;
+            }
+
+            .contactSection input,
+            .contactSection textarea {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="nav-left">Abdullah's Portfolio</div>
+            <div class="nav-right" id="nav-right">
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#aboutSection">About</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Projects</a></li>
+                    <li><a href="#">Contact Me</a></li>
+                </ul>
+            </div>
+            <div class="menu-toggle" id="menu-toggle">&#9776;</div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="firstSection">
+            <div class="leftSection">
+                Hi, My name is <span class="blue">Abdullah</span>
+                <div>and I am a passionate</div>
+                <span id="element"></span>
+                <div class="buttons">
+                    <a href="Resume.pdf" class="btn" download>Download Resume</a>
+                    <a href="https://github.com/abdullahaamir13" class="btn" target="_blank">Visit Github</a>
+                </div>
+            </div>
+            <div class="rightSection">
+                <img src="bg.png" alt="">
+            </div>
+        </section>
+        <hr>
+        <section class="aboutSection">
+            <h2>About Me</h2>
+            <p><strong>Summary:</strong> Results-oriented CS student with a proven track record of optimizing project
+                outcomes. Eager to gain hands-on experience in the IT field, I bring strong resourcefulness,
+                adaptability, and a quick learning ability with me.</p>
+            <br>
+            <h3>Technical Skills</h3>
+            <p>Languages & Technologies:</p>
+            <ul>
+                <li>C, C++</li>
+                <li>WordPress</li>
+                <li>HTML, CSS, JavaScript, PHP</li>
+                <li>Digital Logic Design</li>
+                <li>Assembly Language</li>
+                <li>Content Writing</li>
+            </ul>
+            <p>Tools & Frameworks:</p>
+            <ul>
+                <li>MS Office (Word, Excel, PowerPoint)</li>
+                <li>Visual Studio</li>
+                <li>Figma</li>
+                <li>WordPress Website Developer Course (Udemy)</li>
+            </ul>
+            <br>
+            <h3>Projects</h3>
+            <ul>
+                <li>PF: Operations on Matrices (C)</li>
+                <li>OOP Project: Portfolio Management System (C++)</li>
+                <li>DLD: Fire Alarm (Software & Hardware)</li>
+                <li>Data Structures: Implementation of Auto-Completion System using AVL Trees (C++)</li>
+                <li>
+                    <p>Completed small projects on Fiverr and in the local market related to Writing and WordPress.
+                        Actively involved in university societies such as GDSC and NuTec.</p>
+                    <h4>Some of my previous work:</h4>
+                    <ul><a href="https://dafficollection.com/" target="_blank">Daffi Collection</a>
+                    </ul>
+                    <ul><a href="https://universalprimeconstructionllc.com/" target="_blank">Universal Prime Construction LLC</a>
+                    </ul>
+                    <ul><a href="https://wearizz.com/" target="_blank">WeaRizz</a>
+                    </ul>
+                    <p style="font-size: small;">Note: Others are down. Designs could be provided on demand.</p>
+                </li>
+            </ul>
+            <br>
+            <h3>Education</h3>
+            <p><strong>Bachelor of Science in Computer Science</strong><br>National University of Computer and Emerging
+                Sciences - FAST</p>
+            <ul>
+                <li>Skills: C, C++, Assembly, HTML, CSS, MS Office (Word, Excel, PowerPoint)</li>
+                <li>Relevant Courses: Digital Logic Design (DLD), Introduction to Computing (ICT), Programming
+                    Fundamentals (PF), Object-Oriented Programming (OOP), Data Structures</li>
+            </ul>
+            <p><strong>Intermediate (Pre-Engineering)</strong><br>Fazaia Inter College, Chaklala, Rawalpindi Cantt</p>
+        </section>
+        <hr>
+        <section class="secondSection">
+            <span class="textGray">What I have done so far</span>
+            <h1>Work Experience</h1>
+            <div class="job">
+                <div class="job-title">Intern at D' Educationist, Islamabad</div>
+                <div class="job-duration">July 2023 - August 2023</div>
+                <div class="job-description">Gained Corporate Experience, Strategic Management Skills,
+                    and Competency Skills. <br>
+                    Was awarded “Best Intern of the Program” award. <br>
+                    Led a team of 2 in successfully delivering all the tasks assigned.</div>
+            </div>
+        </section>
+        <hr>
+        <section class="contactSection">
+            <h2>Contact Me</h2>
+            <form>
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" rows="4" required></textarea>
+                <button type="submit">Submit</button>
+            </form>
+            <br><br>
+        </section>
+    </main>
+    <footer>
+        <div class="footer">
+            <div class="footer-first">
+                <h3>Abdullah's Developer Portfolio</h3>
+            </div>
+            <div class="footer-second">
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Projects</a></li>
+                    <li><a href="#">Contact Me</a></li>
+                </ul>
+            </div>
+            <div class="footer-third">
+                <h3>About</h3>
+                <p>I'm Abdullah, a results-oriented CS student specializing in WordPress development and content
+                    writing, eager to bring my skills to the IT field.</p>
+            </div>
+            <div class="footer-fourth">
+                <h3>Contact Details</h3>
+                <ul>
+                    <li>Email: abdullahaamir977@gmail.com</li>
+                    <li>Phone: +923360962785</li>
+                    <li>Location: Islamabad, Pakistan</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-rights">
+            Copyright &#169 Abdullah's Portfolio | All rights reserved
+        </div>
+    </footer>
+    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+    <!-- Setup and start animation! -->
+    <script>
+        var typed = new Typed('#element', {
+            strings: ['Web Developer', 'Content Writer', 'Computer Scientist'],
+            typeSpeed: 50,
+        });
+
+        document.getElementById('menu-toggle').addEventListener('click', function () {
+            var navRight = document.getElementById('nav-right');
+            if (navRight.style.display === 'flex') {
+                navRight.style.display = 'none';
+            } else {
+                navRight.style.display = 'flex';
+            }
+        });
+    </script>
+</body>
+
+</html>
