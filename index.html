@@ -121,6 +121,16 @@
 
     /* Footer */
     footer{padding:28px 0;border-top:1px solid var(--border);color:var(--muted)}
+
+    /* PDF preview in project card */
+    .pdf-thumb{
+      width:160px; height:108px; border:1px solid var(--border);
+      border-radius:12px; overflow:hidden; background:#111; display:flex; align-items:center; justify-content:center;
+    }
+    .pdf-thumb object{ width:100%; height:100%; pointer-events:none; }
+    .pdf-badge{ position:absolute; top:6px; left:6px; font-size:.7rem; background:#222; border:1px solid var(--border); padding:2px 6px; border-radius:999px; color:#bbb; }
+    .open-pdf{ margin-top:8px; display:inline-flex; align-items:center; gap:8px; font-size:.85rem; }
+    .project.pdf .project-body{ flex:1 }
   </style>
 </head>
 <body>
@@ -197,9 +207,9 @@
         <h2 class="section-title">Selected Projects</h2>
         <div class="grid" style="margin-top:10px">
           <article class="card project">
-            <img src="assets/daffi-thumb.jpg" alt="Daffi Collection store preview" loading="lazy" />
+            <img src="assets/aloha.jpg" alt="Aloha Design store preview" loading="lazy" />
             <div class="project-body">
-              <div class="title">Daffi Collection</div>
+              <div class="title">Aloha Design</div>
               <div class="meta">Landing page design · Instagram feed · Jewellery/Accessories site</div>
               <div class="tags">
                 <span class="tag">Elementor</span><span class="tag">WooCommerce</span><span class="tag">UI</span>
@@ -207,25 +217,39 @@
             </div>
           </article>
 
-          <article class="card project">
-            <img src="assets/universal-thumb.jpg" alt="Universal Prime Construction preview" loading="lazy" />
+          <!-- Universal Prime Construction LLC (PDF) -->
+          <article class="card project pdf">
+            <div style="position:relative">
+              <div class="pdf-thumb">
+                <object data="assets/universal.pdf#page=1&zoom=150" type="application/pdf"></object>
+              </div>
+              <span class="pdf-badge">PDF</span>
+            </div>
             <div class="project-body">
               <div class="title">Universal Prime Construction LLC</div>
               <div class="meta">Corporate site · Lead forms · Structured content</div>
               <div class="tags">
                 <span class="tag">Gutenberg</span><span class="tag">Forms</span><span class="tag">Layout</span>
               </div>
+              <a class="open-pdf" href="assets/universal.pdf" target="_blank" rel="noopener">Open PDF →</a>
             </div>
           </article>
 
-          <article class="card project">
-            <img src="assets/stapp-thumb.jpg" alt="STAPP Education LMS Platform preview" loading="lazy" />
+          <!-- STAPP — Education LMS Platform (PDF) -->
+          <article class="card project pdf">
+            <div style="position:relative">
+              <div class="pdf-thumb">
+                <object data="assets/stapp.pdf#page=1&zoom=150" type="application/pdf"></object>
+              </div>
+              <span class="pdf-badge">PDF</span>
+            </div>
             <div class="project-body">
-              <div class="title">STAPP Education LMS Platform</div>
-              <div class="meta">Freemium/Premium access · Notes upload & buy/sell · Discussions · Optimized mobile UX</div>
+              <div class="title">STAPP — Education LMS Platform</div>
+              <div class="meta">Freemium/Premium access · Notes upload &amp; buy/sell · Discussions · Optimized mobile UX</div>
               <div class="tags">
                 <span class="tag">LMS</span><span class="tag">Membership</span><span class="tag">Marketplace</span><span class="tag">WordPress</span>
               </div>
+              <a class="open-pdf" href="assets/stapp.pdf" target="_blank" rel="noopener">Open PDF →</a>
             </div>
           </article>
 
