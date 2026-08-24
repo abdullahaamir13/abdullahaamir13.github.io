@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>abdullah@lab — ML Engineer &amp; Security Researcher</title>
+<meta name="description" content="Muhammad Abdullah Aamir — ML Engineer &amp; Security Researcher. Computer vision, malware detection, and the systems that defend them." />
+<meta name="theme-color" content="#0B0B12" />
+<link rel="canonical" href="https://abdullahaamir13.github.io/" />
+<link rel="icon" href="favicon.png" type="image/png" sizes="64x64" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<meta property="og:type" content="profile" />
+<meta property="og:title" content="abdullah@lab — ML Engineer &amp; Security Researcher" />
+<meta property="og:description" content="A live research console: computer vision, malware detection, and the systems that defend them." />
+<meta property="og:url" content="https://abdullahaamir13.github.io/" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="og:image" content="https://abdullahaamir13.github.io/og-cover.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500;700&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet" />
+<script>document.documentElement.className='js';</script>
+<style>
+:root{
+  --bg-void:#0B0B12; --bg-panel:#12131C; --bg-raised:#181A26; --line:#242636;
+  --fg:#ECEDF5; --fg-dim:#9A9DB2; --fg-faint:#5C5F76;
+  --cls-ml:#38E1D6; --cls-cv:#8B7BFF; --cls-sec:#F5A742;
+  --ok:#3FB950; --crit:#FF5C57;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --serif:'Newsreader',Georgia,serif;
+  --bar:34px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--bg-void);color:var(--fg);font-family:var(--mono);font-size:15px;overflow:hidden}
+.js body{overscroll-behavior:none}
+a{color:var(--cls-ml);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:3px}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--cls-ml);outline-offset:2px;border-radius:3px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.c-ml{color:var(--cls-ml)}.c-cv{color:var(--cls-cv)}.c-sec{color:var(--cls-sec)}
+.c-ok{color:var(--ok)}.c-crit{color:var(--crit)}.dim{color:var(--fg-dim)}.faint{color:var(--fg-faint)}
+
+/* ── shell layout ───────────────────────────────────────────── */
+.os{height:100vh;height:100dvh;display:grid;
+  grid-template-columns:238px minmax(0,1fr);
+  grid-template-rows:var(--bar) minmax(0,1fr) auto}
+
+/* status line */
+.sl{grid-column:1/-1;display:flex;align-items:center;gap:0;background:var(--bg-panel);
+  border-bottom:1px solid var(--line);font-size:.72rem;padding:0 8px 0 0;min-width:0}
+.sl-host{background:var(--cls-ml);color:#08080d;font-weight:700;padding:3px 9px;border-radius:4px;margin:0 10px;white-space:nowrap}
+.sl-role{color:var(--fg-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sl-tasks{display:flex;gap:5px;margin-left:14px;overflow-x:auto;scrollbar-width:none;min-width:0}
+.sl-tasks::-webkit-scrollbar{display:none}
+.sl-tasks button{flex:0 0 auto;font-size:.68rem;color:var(--fg-dim);border:1px solid var(--line);
+  border-radius:4px;padding:3px 8px;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sl-tasks button:hover,.sl-tasks button[aria-current="true"]{color:var(--fg);border-color:var(--fg-faint);background:var(--bg-raised)}
+.sl-right{margin-left:auto;display:flex;align-items:center;gap:2px;flex:0 0 auto}
+.sl-right .up{color:var(--fg-faint);font-size:.68rem;padding-right:6px;white-space:nowrap}
+.sl-right a{color:var(--fg-dim);font-size:.68rem;padding:8px 7px;border-radius:4px}
+.sl-right a:hover{color:var(--fg);background:var(--bg-raised);text-decoration:none}
+.burger{display:none;padding:6px 10px;color:var(--fg-dim);font-size:1rem;margin-left:4px}
+
+/* sidebar file tree */
+.side{grid-row:2;background:var(--bg-panel);border-right:1px solid var(--line);
+  overflow-y:auto;overflow-x:hidden;padding:10px 0 20px;scrollbar-width:thin}
+.side h2{font-size:.63rem;letter-spacing:.13em;text-transform:uppercase;color:var(--fg-faint);
+  font-family:var(--mono);font-weight:500;margin:6px 0 8px;padding:0 14px}
+.node{display:flex;align-items:center;gap:7px;width:100%;text-align:left;font-size:.76rem;
+  color:var(--fg-dim);padding:6px 12px 6px 0;min-height:32px;border-left:2px solid transparent}
+.node:hover{color:var(--fg);background:var(--bg-raised)}
+.node[aria-current="true"]{color:var(--fg);border-left-color:var(--cls-ml);background:var(--bg-raised)}
+.node .gl{flex:0 0 auto;width:13px;text-align:center;color:var(--fg-faint)}
+.node.dir .gl{color:var(--cls-ml)}
+.node.f-sec .gl{color:var(--cls-sec)}
+.node.f-cv .gl{color:var(--cls-cv)}
+.node .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.side .depth1{padding-left:16px}.side .depth2{padding-left:32px}
+.side-foot{padding:14px 16px 0;font-size:.66rem;color:var(--fg-faint);line-height:1.7;border-top:1px solid var(--line);margin-top:12px}
+
+/* desktop */
+.desk{grid-row:2;position:relative;overflow:hidden;background:var(--bg-void);min-width:0}
+#bg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hint{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;
+  color:var(--fg-faint);font-size:.78rem;line-height:2;pointer-events:none;transition:opacity .4s ease;padding:0 20px}
+.hint kbd{font-family:var(--mono);color:var(--cls-ml);border:1px solid var(--line);border-radius:4px;
+  padding:2px 7px;background:var(--bg-panel);font-size:.74rem}
+.hint.gone{opacity:0}
+
+/* windows */
+.win{position:absolute;display:flex;flex-direction:column;background:var(--bg-panel);
+  border:1px solid var(--line);border-radius:10px;overflow:hidden;
+  box-shadow:0 28px 70px -20px rgba(0,0,0,.85),0 0 0 1px rgba(0,0,0,.3);
+  width:min(548px,calc(100% - 28px));max-height:calc(100% - 24px)}
+.js .win{animation:winin .26s cubic-bezier(.2,.9,.25,1)}
+@keyframes winin{from{opacity:0;transform:scale(.965) translateY(8px)}to{opacity:1;transform:none}}
+.win.closing{animation:winout .16s ease forwards}
+@keyframes winout{to{opacity:0;transform:scale(.97)}}
+.win-bar{display:flex;align-items:center;gap:9px;padding:9px 10px 9px 12px;background:var(--bg-raised);
+  border-bottom:1px solid var(--line);cursor:grab;touch-action:none;user-select:none;flex:0 0 auto}
+.win-bar:active{cursor:grabbing}
+.win-dot{width:9px;height:9px;border-radius:50%;background:var(--ac,var(--fg-faint));flex:0 0 auto}
+.win-title{font-size:.72rem;color:var(--fg-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.win-x{margin-left:auto;width:26px;height:26px;border-radius:5px;color:var(--fg-faint);
+  display:flex;align-items:center;justify-content:center;font-size:.9rem;flex:0 0 auto}
+.win-x:hover{background:var(--crit);color:#08080d}
+.win-body{overflow-y:auto;padding:18px 20px 20px;scrollbar-width:thin;min-height:0}
+.win:focus-visible{outline:2px solid var(--cls-ml);outline-offset:0}
+
+/* terminal */
+.term{grid-column:1/-1;grid-row:3;background:var(--bg-panel);border-top:1px solid var(--line);
+  display:flex;flex-direction:column;height:min(31vh,270px);min-height:150px;transition:height .22s ease}
+.term.min{height:38px;min-height:38px}
+.term-bar{display:flex;align-items:center;gap:9px;padding:0 12px;height:38px;flex:0 0 auto;
+  border-bottom:1px solid var(--line);font-size:.68rem;color:var(--fg-faint);letter-spacing:.08em;text-transform:uppercase}
+.term-bar .grow{margin-left:auto;display:flex;gap:4px}
+.term-bar button{color:var(--fg-faint);padding:6px 9px;border-radius:4px;font-size:.68rem;text-transform:none;letter-spacing:0}
+.term-bar button:hover{color:var(--fg);background:var(--bg-raised)}
+.term.min .term-body,.term.min .term-in,.term.min .chips{display:none}
+.term-body{flex:1;overflow-y:auto;padding:11px 14px;font-size:.76rem;line-height:1.7;scrollbar-width:thin;min-height:0}
+.term-body .ln{margin:0;white-space:pre-wrap;word-break:break-word}
+.term-body .ln.pre{white-space:pre;word-break:normal}
+.term-body a{text-decoration:underline;text-underline-offset:2px}
+.term-in{display:flex;align-items:center;gap:8px;padding:8px 14px;border-top:1px solid var(--line);flex:0 0 auto}
+.term-in .ps{color:var(--ok);font-size:.76rem;white-space:nowrap}
+.term-in input{flex:1;min-width:0;background:none;border:0;color:var(--fg);font-family:var(--mono);
+  font-size:.8rem;padding:5px 0;caret-color:var(--cls-ml)}
+.term-in input:focus{outline:none}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:0 14px 10px;scrollbar-width:none;flex:0 0 auto}
+.chips::-webkit-scrollbar{display:none}
+.chips button{flex:0 0 auto;min-height:34px;padding:6px 11px;border:1px solid var(--line);border-radius:6px;
+  color:var(--fg-dim);font-size:.7rem;background:var(--bg-raised)}
+.chips button:hover{color:var(--fg);border-color:var(--cls-ml)}
+
+/* ── window content ─────────────────────────────────────────── */
+.win-body h2{font-family:var(--serif);font-size:1.5rem;font-weight:600;margin:0 0 2px;line-height:1.15}
+.win-body h3{font-family:var(--serif);font-size:1.15rem;font-weight:600;margin:0 0 6px}
+.win-body p{margin:0 0 12px;font-family:var(--sans);font-size:.93rem;line-height:1.6;color:var(--fg-dim)}
+.win-body p.k{font-family:var(--mono);font-size:.68rem;color:var(--fg-faint);margin:0 0 12px;letter-spacing:.06em}
+.win-body p.role{font-family:var(--mono);font-size:.78rem;color:var(--cls-ml);margin:0 0 14px}
+.win-body strong{color:var(--fg);font-weight:500}
+.win-body code{font-family:var(--mono);font-size:.85em;color:var(--fg)}
+.tagrow{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 14px}
+.tag{font-family:var(--mono);font-size:.62rem;letter-spacing:.09em;text-transform:uppercase;
+  padding:3px 8px;border-radius:4px;border:1px solid}
+.tag.ml{color:var(--cls-ml);border-color:rgba(56,225,214,.4);background:rgba(56,225,214,.07)}
+.tag.cv{color:var(--cls-cv);border-color:rgba(139,123,255,.42);background:rgba(139,123,255,.08)}
+.tag.sec{color:var(--cls-sec);border-color:rgba(245,167,66,.42);background:rgba(245,167,66,.08)}
+.tag.crit{color:var(--crit);border-color:rgba(255,92,87,.5);background:rgba(255,92,87,.09)}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.stat{border:1px solid var(--line);border-radius:6px;padding:7px 11px;background:var(--bg-void);flex:1 1 92px}
+.stat b{display:block;font-family:var(--mono);font-size:1rem;color:var(--fg);font-weight:700;line-height:1.3}
+.stat span{font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-faint)}
+.chain{font-family:var(--mono);font-size:.71rem;color:var(--fg-dim);line-height:2.1;margin:0 0 14px}
+.chain span{background:var(--bg-void);border:1px solid var(--line);border-radius:4px;padding:3px 7px;white-space:nowrap}
+.chain .ar{color:var(--fg-faint);padding:0 2px}
+.blk{font-family:var(--mono);font-size:.72rem;line-height:1.75;background:var(--bg-void);
+  border:1px solid var(--line);border-radius:6px;padding:11px 13px;margin:0 0 14px;overflow-x:auto;white-space:pre}
+.ethics{display:flex;gap:9px;font-family:var(--mono);font-size:.71rem;line-height:1.6;color:var(--cls-sec);
+  background:rgba(245,167,66,.07);border:1px solid rgba(245,167,66,.32);border-radius:6px;padding:10px 12px;margin:0 0 14px}
+.ethics::before{content:"!";font-weight:700;flex:0 0 auto}
+.foot{font-family:var(--mono);font-size:.68rem;color:var(--fg-faint);margin:0;border-top:1px solid var(--line);padding-top:11px}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.btn{display:inline-flex;align-items:center;min-height:40px;padding:9px 14px;border-radius:7px;border:1px solid var(--line);
+  background:var(--bg-raised);color:var(--fg);font-family:var(--mono);font-size:.74rem}
+.btn:hover{border-color:var(--cls-ml);color:var(--cls-ml);text-decoration:none}
+.btn.pri{background:var(--cls-ml);border-color:var(--cls-ml);color:#08080d;font-weight:700}
+.btn.pri:hover{background:#5ee9df;color:#08080d}
+.epoch{font-family:var(--mono);font-size:.71rem;line-height:1.9;margin:0 0 12px}
+.epoch .r{display:flex;flex-wrap:wrap;gap:.2rem .8rem}
+.js .epoch .r{opacity:0;transition:opacity .18s ease}
+.epoch .r.on{opacity:1}
+.epoch .bar{color:var(--cls-ml);letter-spacing:-.05em}
+
+/* ── mobile ─────────────────────────────────────────────────── */
+@media(max-width:860px){
+  .os{grid-template-columns:minmax(0,1fr)}
+  .side{position:absolute;top:var(--bar);bottom:0;left:0;width:min(78vw,272px);z-index:70;
+    transform:translateX(-102%);transition:transform .24s cubic-bezier(.2,.8,.2,1);
+    box-shadow:20px 0 50px -20px rgba(0,0,0,.9)}
+  .side.open{transform:none}
+  .burger{display:block}
+  .sl-role{display:none}
+  .desk{grid-row:2;grid-column:1}
+  .win{inset:10px auto auto 10px;width:calc(100% - 20px);max-height:calc(100% - 20px)}
+  .win-bar{cursor:default}
+  .term{height:min(38vh,240px)}
+  .scrim{position:absolute;inset:var(--bar) 0 0 0;background:rgba(6,6,12,.6);z-index:65}
+}
+@media(max-width:420px){ .sl-right a{padding:8px 5px} .win-body{padding:15px 15px 17px} }
+
+/* ── reduced motion ─────────────────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important}
+  .js .epoch .r{opacity:1 !important}
+}
+
+
+/* ── avatar ─────────────────────────────────────────────────── */
+.av{border-radius:50%;display:block;object-fit:cover;background:var(--bg-void)}
+.sl-av{margin-left:8px;padding:0;border-radius:50%;line-height:0;flex:0 0 auto;
+  box-shadow:0 0 0 1px var(--line)}
+.sl-av:hover{box-shadow:0 0 0 2px var(--cls-ml)}
+.sl-av .av{width:22px;height:22px}
+.idrow{display:flex;gap:14px;align-items:center;margin:0 0 14px}
+.idrow .port{position:relative;flex:0 0 auto}
+.idrow .av{width:66px;height:66px;box-shadow:0 0 0 1px var(--line)}
+.idrow .brk{position:absolute;inset:-6px;pointer-events:none;
+  background:
+    linear-gradient(var(--cls-ml),var(--cls-ml)) left 0 top 0/10px 2px no-repeat,
+    linear-gradient(var(--cls-ml),var(--cls-ml)) left 0 top 0/2px 10px no-repeat,
+    linear-gradient(var(--cls-ml),var(--cls-ml)) right 0 top 0/10px 2px no-repeat,
+    linear-gradient(var(--cls-ml),var(--cls-ml)) right 0 top 0/2px 10px no-repeat,
+    linear-gradient(var(--cls-ml),var(--cls-ml)) left 0 bottom 0/10px 2px no-repeat,
+    linear-gradient(var(--cls-ml),var(--cls-ml)) left 0 bottom 0/2px 10px no-repeat,
+    linear-gradient(var(--cls-ml),var(--cls-ml)) right 0 bottom 0/10px 2px no-repeat,
+    linear-gradient(var(--cls-ml),var(--cls-ml)) right 0 bottom 0/2px 10px no-repeat}
+.idrow .who h2{margin:0}
+.idrow .who p{margin:2px 0 0}
+
+/* ── boot splash (POST) ─────────────────────────────────────── */
+#post{position:fixed;inset:0;z-index:200;background:var(--bg-void);display:flex;
+  flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  font-family:var(--mono);font-size:.78rem;color:var(--fg-dim);cursor:pointer;padding:24px}
+#post .av{width:92px;height:92px;box-shadow:0 0 0 1px var(--line),0 0 44px -10px rgba(56,225,214,.5)}
+#post .lines{width:min(430px,100%);min-height:132px}
+#post .ln{margin:0;white-space:pre-wrap;line-height:1.85}
+#post .skip{color:var(--fg-faint);font-size:.68rem}
+#post.done{opacity:0;pointer-events:none;transition:opacity .4s ease}
+.no-js #post{display:none}
+
+/* ── context menu ───────────────────────────────────────────── */
+.ctx{position:absolute;z-index:150;min-width:196px;padding:5px;border:1px solid var(--line);
+  border-radius:8px;background:var(--bg-raised);box-shadow:0 20px 50px -16px rgba(0,0,0,.9)}
+.ctx button{display:flex;align-items:center;gap:9px;width:100%;text-align:left;font-size:.73rem;
+  color:var(--fg-dim);padding:8px 10px;border-radius:5px;min-height:34px}
+.ctx button:hover{background:var(--bg-void);color:var(--fg)}
+.ctx button .gl{color:var(--cls-ml);width:13px;text-align:center;flex:0 0 auto}
+.ctx hr{border:0;border-top:1px solid var(--line);margin:4px 2px}
+
+/* ── toasts ─────────────────────────────────────────────────── */
+.toasts{position:absolute;right:12px;bottom:12px;z-index:120;display:flex;flex-direction:column;gap:8px;
+  max-width:min(330px,calc(100% - 24px));pointer-events:none}
+.toast{pointer-events:auto;display:flex;gap:9px;align-items:flex-start;background:var(--bg-panel);
+  border:1px solid var(--line);border-left:2px solid var(--ac,var(--cls-ml));border-radius:7px;
+  padding:9px 11px;font-size:.71rem;line-height:1.55;color:var(--fg-dim);
+  box-shadow:0 16px 40px -14px rgba(0,0,0,.85)}
+.js .toast{animation:tin .3s cubic-bezier(.2,.9,.25,1)}
+@keyframes tin{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
+.toast.out{opacity:0;transform:translateX(18px);transition:opacity .25s ease,transform .25s ease}
+.toast b{color:var(--fg);font-weight:500}
+.toast .tx{margin-left:auto;color:var(--fg-faint);flex:0 0 auto;padding:0 2px}
+.toast .tx:hover{color:var(--fg)}
+
+/* ── window buttons / maximise / resize ─────────────────────── */
+.win-b{width:24px;height:24px;border-radius:5px;color:var(--fg-faint);font-size:.8rem;
+  display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.win-b:hover{background:var(--bg-void);color:var(--fg)}
+.win-x{margin-left:2px}
+.win-title{margin-right:auto}
+.win.max{left:8px !important;top:8px !important;width:calc(100% - 16px) !important;
+  height:calc(100% - 16px) !important;max-height:none}
+.win.hidden{display:none}
+.win-rz{position:absolute;right:0;bottom:0;width:18px;height:18px;cursor:nwse-resize;touch-action:none;
+  background:linear-gradient(135deg,transparent 48%,var(--line) 48%,var(--line) 60%,transparent 60%,
+    transparent 72%,var(--line) 72%,var(--line) 84%,transparent 84%)}
+.win.max .win-rz{display:none}
+@media(max-width:860px){.win-rz,.win-b.win-max{display:none}}
+
+/* ── htop / neofetch ────────────────────────────────────────── */
+.htop{font-family:var(--mono);font-size:.71rem}
+.htop .hdr,.htop .prow{display:grid;grid-template-columns:3.1rem 1fr 6.4rem 2.6rem;gap:0 8px;
+  align-items:center;padding:4px 0}
+.htop .hdr{color:var(--fg-faint);font-size:.62rem;letter-spacing:.09em;text-transform:uppercase;
+  border-bottom:1px solid var(--line);margin-bottom:3px}
+.htop .prow{border-bottom:1px solid rgba(36,38,54,.5)}
+.htop .pid{color:var(--fg-faint)}
+.htop .pname{color:var(--fg-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.htop .hbar{height:7px;background:var(--bg-void);border:1px solid var(--line);border-radius:2px;overflow:hidden}
+.htop .hbar i{display:block;height:100%;width:0;background:var(--cls-ml);transition:width .85s linear}
+.htop .prow.cv .hbar i{background:var(--cls-cv)}
+.htop .prow.sec .hbar i{background:var(--cls-sec)}
+.htop .pct{text-align:right;color:var(--fg)}
+.htop .load{color:var(--fg-dim);margin:11px 0 0;font-size:.7rem}
+.nf{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start}
+.nf .av{width:104px;height:104px;box-shadow:0 0 0 1px var(--line)}
+.nf dl{margin:0;font-family:var(--mono);font-size:.72rem;line-height:1.85}
+.nf dt{color:var(--cls-ml);float:left;width:5.4rem;clear:left}
+.nf dd{margin:0 0 0 5.4rem;color:var(--fg-dim)}
+@media(max-width:520px){.nf{grid-template-columns:1fr}.nf dt{float:none;width:auto}.nf dd{margin:0 0 6px}}
+
+/* ── no-JS: the same content as a plain readable document ───── */
+.no-js .js-only{display:none !important}
+#fs{display:none}
+.no-js .os{display:none}
+.no-js body{overflow:auto}
+.no-js #fs{display:block;max-width:720px;margin:0 auto;padding:44px 22px 80px;font-family:var(--sans)}
+.no-js #fs article{border-top:1px solid var(--line);padding:26px 0 4px}
+.no-js #fs article:first-of-type{border-top:0}
+.no-js #fs .win-body{padding:0}
+</style>
+</head>
+<body>
+<!-- boot splash -->
+<div id="post" class="js-only" role="status" aria-label="Booting">
+  <img class="av" src="avatar.png" alt="" width="92" height="92" />
+  <div class="lines" id="postLines"></div>
+  <p class="skip">press any key · or tap to skip</p>
+</div>
+
+<div class="os" id="os">
+
+  <!-- status line -->
+  <div class="sl">
+    <button class="burger js-only" id="burger" aria-label="Toggle file tree" aria-expanded="false">☰</button>
+    <button class="sl-av js-only" id="avBtn" aria-label="Open README.md"><img class="av" src="avatar.png" alt="" width="22" height="22" /></button>
+    <span class="sl-host">abdullah@lab</span>
+    <span class="sl-role">ML Engineer &amp; Security Researcher</span>
+    <div class="sl-tasks" id="tasks" role="group" aria-label="Open windows"></div>
+    <div class="sl-right">
+      <span class="up js-only" id="up">00:00:00</span>
+      <a href="https://github.com/abdullahaamir13" target="_blank" rel="me noopener">github</a>
+      <a href="https://www.linkedin.com/in/abdullah-aamir" target="_blank" rel="me noopener">linkedin</a>
+      <a href="AbdullahAamirResume.pdf" download>résumé</a>
+    </div>
+  </div>
+
+  <!-- file tree -->
+  <nav class="side" id="side" aria-label="Files">
+    <h2>~/lab</h2>
+    <div id="tree"></div>
+    <p class="side-foot">tap a file to open it<br />or drive it from the shell below</p>
+  </nav>
+
+  <!-- desktop -->
+  <div class="desk" id="desk">
+    <canvas id="bg" aria-hidden="true"></canvas>
+    <p class="hint" id="hint">
+      open a file from the tree —<br />or type <kbd>ls</kbd> · <kbd>open README.md</kbd> · <kbd>help</kbd>
+    </p>
+    <div class="toasts" id="toasts" aria-live="polite" aria-label="Notifications"></div>
+  </div>
+
+  <!-- terminal -->
+  <div class="term" id="term">
+    <div class="term-bar">
+      <span>shell</span><span class="faint" id="cwdLabel">~</span>
+      <span class="grow">
+        <button id="detectBtn">./detect --self</button>
+        <button id="minBtn" aria-expanded="true">minimise</button>
+      </span>
+    </div>
+    <div class="term-body" id="out" role="log" aria-live="polite" aria-label="Terminal output" tabindex="0"></div>
+    <div class="term-in">
+      <label class="ps" for="cmd" id="ps">abdullah@lab:~$</label>
+      <input id="cmd" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="help" aria-label="Command input" />
+    </div>
+    <div class="chips" id="chips" role="group" aria-label="Quick commands">
+      <button data-cmd="help">help</button>
+      <button data-cmd="ls">ls</button>
+      <button data-cmd="tree">tree</button>
+      <button data-cmd="whoami">whoami</button>
+      <button data-cmd="open README.md">open README.md</button>
+      <button data-cmd="cd research">cd research</button>
+      <button data-cmd="open skills.nmap">skills</button>
+      <button data-cmd="open contact.json">contact</button>
+      <button data-cmd="neofetch">neofetch</button>
+      <button data-cmd="htop">htop</button>
+      <button data-cmd="sudo hire-me">sudo hire-me</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ virtual filesystem: window contents (also the no-JS page) ══ -->
+<div id="fs">
+
+<article data-file="~/README.md" data-title="README.md" data-ac="var(--cls-ml)"
+  data-cat="ML Engineer &amp; Security Researcher — computer vision, malware detection.|two papers in progress · one hand-built dataset · one live SIEM deployment|try: ls · cd research · open contact.json">
+  <div class="win-body">
+    <p class="k">$ cat ~/README.md</p>
+    <div class="idrow">
+      <span class="port"><img class="av" src="avatar.png" alt="Illustrated portrait of Muhammad Abdullah Aamir" width="66" height="66" /><span class="brk" aria-hidden="true"></span></span>
+      <span class="who">
+        <h2>Muhammad Abdullah Aamir</h2>
+        <p class="role">ML Engineer &amp; Security Researcher</p>
+      </span>
+    </div>
+    <p>Computer vision and malware detection — and the distance between what a model scores on a benchmark and what it earns in the field. Final year, BSCS at FAST-NUCES, Islamabad.</p>
+    <div class="stats">
+      <div class="stat"><b>6</b><span>binary formats</span></div>
+      <div class="stat"><b>3,700+</b><span>images labelled</span></div>
+      <div class="stat"><b>277 ms</b><span>time to verdict</span></div>
+      <div class="stat"><b>2</b><span>papers</span></div>
+    </div>
+    <p class="foot">everything here is a real file. <code>ls</code> to look around.</p>
+  </div>
+</article>
+
+<article data-file="~/research/malware-detector.md" data-title="malware-detector.md" data-ac="var(--cls-ml)"
+  data-cat="six-format malware detector, running inside a live SIEM.|benchmark 96% → real-world 66% · the gap was the finding|open research/malware-detector.md for the full card">
+  <div class="win-body">
+    <p class="k">$ cat ~/research/malware-detector.md</p>
+    <div class="tagrow"><span class="tag ml">model</span><span class="tag sec">siem</span><span class="tag">nescom centech · 2026</span></div>
+    <h3>Six-format malware detector</h3>
+    <p>Calibrated ensembles of XGBoost, LightGBM and Random Forest across Win32, Win64, .NET, ELF, PDF and APK — trained on EMBER2018, BODMAS and EMBER2024, then made to survive contact with real files.</p>
+    <div class="epoch" data-epoch="1">
+      <div class="r"><span>epoch 01/04</span><span class="dim">loss 0.9120</span><span>acc 0.71</span><span class="bar">▓▓▓░░░░░░░</span></div>
+      <div class="r"><span>epoch 02/04</span><span class="dim">loss 0.4380</span><span>acc 0.88</span><span class="bar">▓▓▓▓▓▓░░░░</span></div>
+      <div class="r"><span>epoch 03/04</span><span class="dim">loss 0.2110</span><span>acc 0.94</span><span class="bar">▓▓▓▓▓▓▓▓░░</span></div>
+      <div class="r"><span>epoch 04/04</span><span class="dim">loss 0.1740</span><span>acc 0.96</span><span class="bar">▓▓▓▓▓▓▓▓▓▓</span> <span class="c-ok">✓ converged</span></div>
+    </div>
+    <p><strong>The finding:</strong> validated against 3,200+ live samples from MalwareBazaar and 2,000+ benign binaries, accuracy fell ~30 points. Not the architecture — a code-signing confound in the training data.</p>
+    <div class="stats">
+      <div class="stat"><b>96% → 66%</b><span>bench → real</span></div>
+      <div class="stat"><b>277 ms</b><span>vs 36 s virustotal</span></div>
+      <div class="stat"><b>5,029</b><span>yara rules</span></div>
+    </div>
+    <p class="foot">wazuh · yara forge core · opnsense · n8n → discord &nbsp;·&nbsp; <span class="dim">epoch trace illustrative; endpoint figures measured</span></p>
+  </div>
+</article>
+
+<article data-file="~/research/saferide-ai.md" data-title="saferide-ai.md" data-ac="var(--cls-cv)"
+  data-cat="3-stage CV pipeline flagging unsafe overcrowding from live video.|85%+ detection at 15+ fps · bus · suzuki · chingchi|open research/saferide-ai.md for the full card">
+  <div class="win-body">
+    <p class="k">$ cat ~/research/saferide-ai.md</p>
+    <div class="tagrow"><span class="tag cv">computer vision</span><span class="tag">final year project</span><span class="tag">2025–2026</span></div>
+    <h3>SafeRideAI</h3>
+    <p>Flags unsafe overcrowding on Pakistani public transport from a live video feed — the passengers hanging off the back of a Suzuki that nobody is counting.</p>
+    <p class="chain">
+      <span>YOLOv8</span><span class="ar">→</span><span>CNN safe/unsafe</span><span class="ar">→</span><span>plate detect</span><span class="ar">→</span><span>OCR</span>
+    </p>
+    <div class="stats">
+      <div class="stat"><b>85%+</b><span>detection</span></div>
+      <div class="stat"><b>15+</b><span>fps</span></div>
+      <div class="stat"><b>3</b><span>vehicle classes</span></div>
+    </div>
+    <p class="foot">python · pytorch · fastapi · mongodb · jwt · docker · flutter · ocr tuned for pakistani plates</p>
+  </div>
+</article>
+
+<article data-file="~/research/papers.bib" data-title="papers.bib" data-ac="var(--cls-cv)"
+  data-cat="2 entries — one in preparation, one in progress.|open research/papers.bib to read them">
+  <div class="win-body">
+    <p class="k">$ cat ~/research/papers.bib</p>
+    <div class="blk">@article{<span class="c-ml">anwar2026saferide</span>,
+  author = {Anwar, H. and Khan, H. and Khan, M.
+            and <span class="c-cv">Aamir, M. A.</span>},
+  title  = {SafeRide AI: image-based real-time
+            vehicle unsafe passenger behaviour
+            detection using deep learning},
+  status = {<span class="c-sec">in preparation</span>}
+}</div>
+    <div class="blk">@article{<span class="c-ml">tahir2026synthetic</span>,
+  author = {Tahir, M. and <span class="c-cv">Aamir, M. A.</span>},
+  title  = {Synthetic data generation using large
+            language models (LLMs) vs. traditional
+            methods (SMOTE)},
+  status = {<span class="c-sec">in progress</span>}
+}</div>
+  </div>
+</article>
+
+<article data-file="~/datasets/pk-transport-3.7k.md" data-title="pk-transport-3.7k.md" data-ac="var(--cls-cv)"
+  data-cat="3,700+ images · the first annotated dataset of pakistani public-transport safety scenes|hand-labelled + model-assisted, human in the loop, CVAT">
+  <div class="win-body">
+    <p class="k">$ cat ~/datasets/pk-transport-3.7k.md</p>
+    <div class="tagrow"><span class="tag cv">dataset</span><span class="tag">first of its kind</span></div>
+    <h3>pk-transport-3.7k</h3>
+    <p>Built because nothing existed to train on — the vehicles and the crowding patterns here don't appear in Western traffic datasets. The dataset had to come before the model.</p>
+    <div class="stats">
+      <div class="stat"><b>3,700+</b><span>images</span></div>
+      <div class="stat"><b>CVAT</b><span>annotation</span></div>
+      <div class="stat"><b>3</b><span>classes</span></div>
+    </div>
+    <p class="foot">hand-labelled, partly model-assisted with a human in the loop · bus · suzuki · chingchi</p>
+  </div>
+</article>
+
+<article data-file="~/security/rce-disclosure.md" data-title="rce-disclosure.md" data-ac="var(--cls-sec)"
+  data-cat="exposed .git → source rebuild → unrestricted upload → RCE.|reported, non-destructive PoC, target unnamed">
+  <div class="win-body">
+    <p class="k">$ cat ~/security/rce-disclosure.md</p>
+    <div class="tagrow"><span class="tag sec">security research</span><span class="tag crit">critical</span><span class="tag">apr 2026</span></div>
+    <h3>Responsible disclosure — live institutional portal</h3>
+    <p class="chain">
+      <span>exposed .git</span><span class="ar">→</span><span>git-dumper rebuild</span><span class="ar">→</span><span>unrestricted upload</span><span class="ar">→</span><span class="c-crit">RCE</span>
+    </p>
+    <p>Plaintext config files in the recovered source held root MySQL credentials and live third-party API keys.</p>
+    <div class="ethics">Non-destructive proof-of-concept. Full report with evidence and remediation steps, delivered to the institution's IT leadership. The target is not named here and never will be.</div>
+    <p class="foot">web pentesting · osint · burp suite · git-dumper</p>
+  </div>
+</article>
+
+<article data-file="~/security/c2-framework.md" data-title="c2-framework.md" data-ac="var(--cls-sec)"
+  data-cat="client-server C2 built for a university infosec course.|coursework and defensive research only — nothing distributed">
+  <div class="win-body">
+    <p class="k">$ cat ~/security/c2-framework.md</p>
+    <div class="tagrow"><span class="tag sec">red team</span><span class="tag">coursework</span><span class="tag">oct–dec 2025</span></div>
+    <h3>Custom C2 / RAT framework</h3>
+    <div class="ethics">University coursework and defensive research only. Built for an Information Security course to study social-engineering surfaces and endpoint evasion. Not published, not deployed, no code or payload distributed from this site.</div>
+    <p>Multi-threaded C2 server, in-memory keylogger, payload delivery chain — built to understand what a defender is actually looking at when they tune a detection.</p>
+    <p class="foot">python · c/c++</p>
+  </div>
+</article>
+
+<article data-file="~/skills.nmap" data-title="skills.nmap" data-ac="var(--cls-ml)"
+  data-cat="5 services open — python, pytorch, yolov8, wazuh, docker.|open skills.nmap for the full scan">
+  <div class="win-body">
+    <p class="k">$ nmap -sV skills.abdullah.lab</p>
+    <div class="blk">PORT      STATE  SERVICE   VERSION
+22/py     <span class="c-ok">open</span>   <span class="c-ml">python</span>    c/c++ · bash · sql · php · js
+443/ml    <span class="c-ok">open</span>   <span class="c-ml">pytorch</span>   sklearn · xgboost · lightgbm
+8080/cv   <span class="c-ok">open</span>   <span class="c-cv">yolov8</span>    cnn · cvat · fastocr · easyocr
+80/sec    <span class="c-ok">open</span>   <span class="c-sec">wazuh</span>     yara · opnsense · nmap · burp
+53/infra  <span class="c-ok">open</span>   <span class="c-sec">docker</span>    linux · fastapi · aws · mongo
+                            mysql · git · n8n</div>
+    <p class="foot">no proficiency percentages — those would be made up</p>
+  </div>
+</article>
+
+<article data-file="~/contact.json" data-title="contact.json" data-ac="var(--cls-ml)"
+  data-cat="email · whatsapp · github · linkedin — all direct, no form.">
+  <div class="win-body">
+    <p class="k">$ cat ~/contact.json</p>
+    <div class="btnrow">
+      <a class="btn pri" href="mailto:abdullahaamir977@gmail.com">email</a>
+      <a class="btn" href="https://wa.me/923360962785" target="_blank" rel="noopener">whatsapp</a>
+      <a class="btn" href="AbdullahAamirResume.pdf" download>résumé.pdf</a>
+    </div>
+    <div class="blk">{
+  "email" : "abdullahaamir977@gmail.com",
+  "phone" : "+92-336-0962785",
+  "github": "abdullahaamir13",
+  "based" : "Islamabad, PK",
+  "status": <span class="c-ok">"open to research roles"</span>
+}</div>
+    <p class="foot">static site, no backend — mail and whatsapp reach me directly</p>
+  </div>
+</article>
+
+<article data-file="~/archive.md" data-title="archive.md" data-ac="var(--fg-faint)"
+  data-cat="earlier work — psychcareai, british airways, deloitte, n8n agents, certifications">
+  <div class="win-body">
+    <p class="k">$ cat ~/archive.md</p>
+    <p>Earlier work, kept for the record. The research above is the current line.</p>
+    <p class="foot" style="border:0;padding:0">
+      <a href="https://github.com/abdullahaamir13/PsychCareAI" target="_blank" rel="noopener">psychcareai</a> ·
+      <a href="https://github.com/abdullahaamir13/british-airways-ds-forage" target="_blank" rel="noopener">british-airways-ds</a> ·
+      <a href="deloitte-data-analytics.pdf" target="_blank" rel="noopener">deloitte-analytics</a> ·
+      <a href="n8n-ai-agents.pdf" target="_blank" rel="noopener">n8n-agents</a><br /><br />
+      certs — michigan · 10pearls · ibm · docker · wordpress
+    </p>
+  </div>
+</article>
+
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (s, c) { return (c || document).querySelector(s); };
+  var $$ = function (s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); };
+  var mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+  var RM = mq.matches;
+  if (mq.addEventListener) mq.addEventListener('change', function (e) { RM = e.matches; });
+  var vis = true;
+  var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  var isPhone = function () { return window.innerWidth <= 860; };
+
+  var desk = $('#desk'), out = $('#out'), input = $('#cmd'), hintEl = $('#hint');
+  var CY = '#38E1D6', VI = '#8B7BFF', AM = '#F5A742';
+
+  /* ══ virtual filesystem ══════════════════════════════════════ */
+  var FS = { name: '~', type: 'dir', children: [
+    { name: 'README.md', type: 'file', gl: '≡' },
+    { name: 'research', type: 'dir', children: [
+      { name: 'malware-detector.md', type: 'file', gl: '≡' },
+      { name: 'saferide-ai.md', type: 'file', gl: '≡', cls: 'f-cv' },
+      { name: 'papers.bib', type: 'file', gl: '§', cls: 'f-cv' }
+    ] },
+    { name: 'datasets', type: 'dir', children: [
+      { name: 'pk-transport-3.7k.md', type: 'file', gl: '≡', cls: 'f-cv' }
+    ] },
+    { name: 'security', type: 'dir', children: [
+      { name: 'rce-disclosure.md', type: 'file', gl: '≡', cls: 'f-sec' },
+      { name: 'c2-framework.md', type: 'file', gl: '≡', cls: 'f-sec' }
+    ] },
+    { name: 'skills.nmap', type: 'file', gl: '⌗' },
+    { name: 'contact.json', type: 'file', gl: '{' },
+    { name: 'archive.md', type: 'file', gl: '≡' },
+    { name: 'AbdullahAamirResume.pdf', type: 'file', gl: '↓', act: 'download' },
+    { name: '.flag', type: 'file', gl: '⚑', hidden: true, cls: 'f-sec' }
+  ] };
+
+  var cwd = ['~'];
+  var cwdStr = function (a) { return (a || cwd).join('/'); };
+  function resolve(arg) {
+    var parts = /^[~\/]/.test(arg) ? ['~'] : cwd.slice();
+    String(arg).split('/').forEach(function (seg) {
+      if (!seg || seg === '.' || seg === '~') return;
+      if (seg === '..') { if (parts.length > 1) parts.pop(); return; }
+      parts.push(seg);
+    });
+    return parts;
+  }
+  function lookup(parts) {
+    var node = FS;
+    for (var i = 1; i < parts.length; i++) {
+      if (node.type !== 'dir') return null;
+      var found = null;
+      for (var j = 0; j < node.children.length; j++)
+        if (node.children[j].name.toLowerCase() === parts[i].toLowerCase()) { found = node.children[j]; break; }
+      if (!found) return null;
+      node = found;
+    }
+    return node;
+  }
+  var tpl = {};
+  $$('#fs article').forEach(function (a) { tpl[a.dataset.file.toLowerCase()] = a; });
+
+  /* ══ sidebar tree ════════════════════════════════════════════ */
+  var tree = $('#tree'), openDirs = { '~/research': 1, '~/datasets': 1, '~/security': 1 };
+  function renderTree() {
+    tree.innerHTML = '';
+    (function walk(node, parts, depth) {
+      node.children.forEach(function (ch) {
+        if (ch.hidden) return;
+        var p = parts.concat(ch.name), ps = p.join('/');
+        var b = document.createElement('button');
+        b.className = 'node depth' + depth + (ch.type === 'dir' ? ' dir' : '') + (ch.cls ? ' ' + ch.cls : '');
+        b.dataset.path = ps;
+        b.innerHTML = '<span class="gl">' + (ch.type === 'dir' ? (openDirs[ps] ? '▾' : '▸') : ch.gl || '·') +
+          '</span><span class="nm">' + esc(ch.name) + (ch.type === 'dir' ? '/' : '') + '</span>';
+        if (ch.type === 'dir' && cwdStr() === ps) b.setAttribute('aria-current', 'true');
+        if (ch.type === 'file' && wins[ps.toLowerCase()]) b.setAttribute('aria-current', 'true');
+        b.addEventListener('click', function () {
+          if (ch.type === 'dir') { openDirs[ps] = !openDirs[ps]; runCmd('cd ' + ps, true); }
+          else runCmd('open ' + ps, true);
+          if (isPhone()) closeSide();
+        });
+        tree.appendChild(b);
+        if (ch.type === 'dir' && openDirs[ps]) walk(ch, p, depth + 1);
+      });
+    })(FS, ['~'], 0);
+  }
+
+  /* ══ window manager ══════════════════════════════════════════ */
+  var wins = {}, zTop = 10, cascade = 0, tasks = $('#tasks');
+  function syncChrome() {
+    var n = Object.keys(wins).length;
+    hintEl.classList.toggle('gone', n > 0 || (detActive && !RM));
+    tasks.innerHTML = '';
+    Object.keys(wins).forEach(function (k) {
+      var w = wins[k], b = document.createElement('button');
+      b.textContent = w.title;
+      if (parseInt(w.el.style.zIndex, 10) === zTop) b.setAttribute('aria-current', 'true');
+      b.addEventListener('click', function () { focusWin(k); });
+      tasks.appendChild(b);
+    });
+    renderTree();
+  }
+  function focusWin(key) {
+    var w = wins[key]; if (!w) return;
+    w.el.classList.remove('hidden');
+    w.el.style.zIndex = ++zTop; w.el.focus(); syncChrome();
+  }
+  function closeWin(key) {
+    var w = wins[key]; if (!w) return;
+    if (w.onClose) try { w.onClose(); } catch (e) {}
+    w.el.classList.add('closing');
+    delete wins[key];
+    setTimeout(function () { if (w.el.parentNode) w.el.parentNode.removeChild(w.el); }, RM ? 0 : 170);
+    syncChrome();
+    if (!Object.keys(wins).length) cascade = 0;
+    syncChrome();
+  }
+  function streamEpochs(scope) {
+    var rows = $$('.epoch .r', scope);
+    rows.forEach(function (r, i) {
+      if (RM) { r.classList.add('on'); return; }
+      setTimeout(function () { r.classList.add('on'); }, 150 + i * 230);
+    });
+  }
+  function buildWin(key, title, ac, bodyHTML, onClose) {
+    if (wins[key]) { focusWin(key); return wins[key].el; }
+    var el = document.createElement('section');
+    el.className = 'win'; el.tabIndex = -1;
+    el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', title);
+    el.style.setProperty('--ac', ac || 'var(--fg-faint)');
+    el.style.zIndex = ++zTop;
+    el.innerHTML =
+      '<header class="win-bar"><span class="win-dot"></span>' +
+      '<span class="win-title">' + esc(title) + '</span>' +
+      '<button class="win-b win-mn" aria-label="Minimise ' + esc(title) + '">–</button>' +
+      '<button class="win-b win-max" aria-label="Maximise ' + esc(title) + '">□</button>' +
+      '<button class="win-x" aria-label="Close ' + esc(title) + '">✕</button></header>' +
+      bodyHTML + '<span class="win-rz" aria-hidden="true"></span>';
+    if (!isPhone()) {
+      var r = desk.getBoundingClientRect();
+      var x = Math.min(30 + cascade * 27, Math.max(12, r.width - 340));
+      var y = Math.min(22 + cascade * 25, Math.max(12, r.height - 220));
+      el.style.left = x + 'px'; el.style.top = y + 'px';
+      cascade = (cascade + 1) % 6;
+    }
+    desk.appendChild(el);
+    wins[key] = { el: el, title: title, onClose: onClose };
+    $('.win-x', el).addEventListener('click', function () { closeWin(key); });
+    $('.win-mn', el).addEventListener('click', function () { el.classList.add('hidden'); syncChrome(); });
+    $('.win-max', el).addEventListener('click', function () { if (!isPhone()) el.classList.toggle('max'); });
+    $('.win-bar', el).addEventListener('dblclick', function (e) {
+      if (!isPhone() && !e.target.closest('button')) el.classList.toggle('max');
+    });
+    el.addEventListener('pointerdown', function () { if (parseInt(el.style.zIndex, 10) !== zTop) focusWin(key); });
+    drag($('.win-bar', el), el);
+    resizer($('.win-rz', el), el);
+    streamEpochs(el);
+    el.focus();
+    syncChrome();
+    return el;
+  }
+  function resizer(handle, el) {
+    var on = false, sx, sy, sw, sh;
+    handle.addEventListener('pointerdown', function (e) {
+      if (isPhone()) return;
+      on = true; sx = e.clientX; sy = e.clientY;
+      sw = el.offsetWidth; sh = el.offsetHeight;
+      el.style.maxHeight = 'none';
+      handle.setPointerCapture(e.pointerId); e.preventDefault();
+    });
+    handle.addEventListener('pointermove', function (e) {
+      if (!on) return;
+      el.style.width = Math.max(260, sw + e.clientX - sx) + 'px';
+      el.style.height = Math.max(120, sh + e.clientY - sy) + 'px';
+    });
+    handle.addEventListener('pointerup', function () { on = false; });
+    handle.addEventListener('pointercancel', function () { on = false; });
+  }
+  function openFile(path) {
+    var key = path.toLowerCase(), a = tpl[key];
+    if (!a) return false;
+    buildWin(key, a.dataset.title, a.dataset.ac, $('.win-body', a).outerHTML);
+    try { history.replaceState(null, '', '#f=' + path.replace(/^~\//, '')); } catch (e) {}
+    return true;
+  }
+  function drag(handle, el) {
+    var sx, sy, ox, oy, on = false;
+    handle.addEventListener('pointerdown', function (e) {
+      if (isPhone() || e.target.closest('.win-x')) return;
+      on = true; sx = e.clientX; sy = e.clientY;
+      ox = parseFloat(el.style.left) || 0; oy = parseFloat(el.style.top) || 0;
+      handle.setPointerCapture(e.pointerId);
+    });
+    handle.addEventListener('pointermove', function (e) {
+      if (!on) return;
+      var r = desk.getBoundingClientRect(), w = el.offsetWidth, h = el.offsetHeight;
+      el.style.left = Math.max(-w + 90, Math.min(r.width - 70, ox + e.clientX - sx)) + 'px';
+      el.style.top = Math.max(0, Math.min(r.height - 42, oy + e.clientY - sy)) + 'px';
+    });
+    handle.addEventListener('pointerup', function () { on = false; });
+    handle.addEventListener('pointercancel', function () { on = false; });
+  }
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    var keys = Object.keys(wins);
+    if (!keys.length) return;
+    keys.sort(function (a, b) { return wins[b].el.style.zIndex - wins[a].el.style.zIndex; });
+    closeWin(keys[0]);
+    input.focus();
+  });
+
+  /* ══ animated backdrop ═══════════════════════════════════════ */
+  var cv = $('#bg'), ctx = cv.getContext('2d'), W = 0, H = 0;
+  var blobs = (function () {
+    var s = 11, r = function () { s = (s * 16807) % 2147483647; return s / 2147483647; };
+    var cols = [CY, VI, AM, VI, CY, AM], a = [];
+    for (var i = 0; i < 6; i++) a.push({ x: .1 + r() * .8, y: .12 + r() * .76, rad: .1 + r() * .16,
+      col: cols[i], ph: r() * 6.28, sp: .1 + r() * .16 });
+    return a;
+  })();
+  var ghosts = [], gseed = 3;
+  function grand() { gseed = (gseed * 48271) % 2147483647; return gseed / 2147483647; }
+  var GLAB = ['region', 'cluster', 'activation', 'edge', 'texture', 'blob'];
+  function spawnGhost(now) {
+    ghosts.push({ t0: now, life: 3200 + grand() * 2600,
+      x: .08 + grand() * .6, y: .1 + grand() * .62,
+      w: .12 + grand() * .18, h: .1 + grand() * .16,
+      lab: GLAB[Math.floor(grand() * GLAB.length)] + ' ' + (.52 + grand() * .42).toFixed(2),
+      col: [CY, VI, AM][Math.floor(grand() * 3)] });
+  }
+  var sweep = -1, sweepNext = 3000, ptr = null;
+  var detActive = false, detT0 = 0;
+  var ROLES = [
+    { t: 'ml_researcher', c: CY, cf: .98, d: [.06, .13, .5, .5], m: [.05, .08, .66, .13] },
+    { t: 'computer_vision', c: VI, cf: .94, d: [.3, .3, .4, .4], m: [.2, .32, .66, .13] },
+    { t: 'security_researcher', c: AM, cf: .96, d: [.52, .16, .38, .42], m: [.07, .56, .74, .13] },
+    { t: 'deep_learning', c: VI, cf: .91, d: [.14, .7, .34, .14], m: [.26, .8, .56, .11] }
+  ];
+  function fit() {
+    var r = desk.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = r.width; H = r.height;
+    cv.width = Math.max(1, Math.round(W * dpr)); cv.height = Math.max(1, Math.round(H * dpr));
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function box(x, y, w, h, col, label, alpha, dash) {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.strokeStyle = col; ctx.lineWidth = 1;
+    if (dash) ctx.setLineDash([4, 5]);
+    ctx.strokeRect(Math.round(x) + .5, Math.round(y) + .5, Math.round(w), Math.round(h));
+    ctx.setLineDash([]);
+    if (!dash) { /* corner brackets */
+      var k = 10;
+      ctx.lineWidth = 2;
+      [[x, y, 1, 1], [x + w, y, -1, 1], [x, y + h, 1, -1], [x + w, y + h, -1, -1]].forEach(function (c) {
+        ctx.beginPath();
+        ctx.moveTo(c[0] + k * c[2], c[1]); ctx.lineTo(c[0], c[1]); ctx.lineTo(c[0], c[1] + k * c[3]);
+        ctx.stroke();
+      });
+    }
+    if (label) {
+      ctx.font = '600 10.5px ' + '"JetBrains Mono", monospace';
+      var tw = ctx.measureText(label).width;
+      ctx.fillStyle = col; ctx.globalAlpha = alpha;
+      ctx.fillRect(Math.round(x) - .5, Math.round(y) - 15, tw + 12, 15);
+      ctx.fillStyle = '#08080d'; ctx.globalAlpha = Math.min(1, alpha + .25);
+      ctx.fillText(label, Math.round(x) + 5.5, Math.round(y) - 4);
+    }
+    ctx.restore();
+  }
+  function draw(now) {
+    if (!W || !H) return;
+    var t = now / 1000;
+    ctx.clearRect(0, 0, W, H);
+    /* activation field */
+    blobs.forEach(function (b) {
+      var dx = RM ? 0 : Math.sin(t * b.sp + b.ph) * .03, dy = RM ? 0 : Math.cos(t * b.sp * .82 + b.ph) * .024;
+      var x = (b.x + dx) * W, y = (b.y + dy) * H, rad = b.rad * Math.min(W, H) * 1.5;
+      var g = ctx.createRadialGradient(x, y, 0, x, y, rad);
+      g.addColorStop(0, b.col + '26'); g.addColorStop(.5, b.col + '10'); g.addColorStop(1, b.col + '00');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, rad, 0, 6.2832); ctx.fill();
+    });
+    /* embedding grid */
+    ctx.strokeStyle = 'rgba(36,38,54,.9)'; ctx.lineWidth = 1; ctx.beginPath();
+    for (var x2 = 26; x2 < W; x2 += 26) { ctx.moveTo(x2 + .5, 0); ctx.lineTo(x2 + .5, H); }
+    for (var y2 = 26; y2 < H; y2 += 26) { ctx.moveTo(0, y2 + .5); ctx.lineTo(W, y2 + .5); }
+    ctx.stroke();
+    /* ambient detections */
+    if (!detActive) {
+      if (!RM && now > sweepNext) { ghosts.length < 3 && spawnGhost(now); sweepNext = now + 2400 + grand() * 2600; }
+      ghosts = ghosts.filter(function (g) { return now - g.t0 < g.life; });
+      ghosts.forEach(function (g) {
+        var k = (now - g.t0) / g.life;
+        var a = (k < .18 ? k / .18 : k > .78 ? (1 - k) / .22 : 1) * .5;
+        box(g.x * W, g.y * H, g.w * W, g.h * H, g.col, g.lab, Math.max(0, a), true);
+      });
+    }
+    /* ./detect --self */
+    if (detActive) {
+      var el = now - detT0, mob = W < 640;
+      if (el < 950) {
+        var ly = (el / 950) * H;
+        var gl = ctx.createLinearGradient(0, ly - 60, 0, ly);
+        gl.addColorStop(0, 'rgba(56,225,214,0)'); gl.addColorStop(1, 'rgba(56,225,214,.16)');
+        ctx.fillStyle = gl; ctx.fillRect(0, ly - 60, W, 60);
+        ctx.strokeStyle = 'rgba(56,225,214,.9)'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(0, ly + .5); ctx.lineTo(W, ly + .5); ctx.stroke();
+      }
+      var fade = el > 8200 ? Math.max(0, 1 - (el - 8200) / 700) : 1;
+      ROLES.forEach(function (r, i) {
+        var at = 900 + i * 210, k = (el - at) / 520;
+        if (k <= 0) return;
+        var g = mob ? r.m : r.d, cf = r.cf * Math.min(1, k);
+        box(g[0] * W, g[1] * H, g[2] * W, g[3] * H, r.c,
+          r.t + '  ' + cf.toFixed(2), Math.min(1, k) * fade * .95, false);
+      });
+      if (el > 8900) { detActive = false; syncChrome(); }
+    }
+    /* cursor receptive field */
+    if (ptr && !RM && !isPhone()) {
+      ctx.save(); ctx.globalAlpha = .5;
+      ctx.strokeStyle = 'rgba(154,157,178,.5)'; ctx.setLineDash([3, 6]); ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(0, ptr.y + .5); ctx.lineTo(W, ptr.y + .5);
+      ctx.moveTo(ptr.x + .5, 0); ctx.lineTo(ptr.x + .5, H);
+      ctx.stroke(); ctx.setLineDash([]);
+      ctx.strokeStyle = 'rgba(56,225,214,.55)';
+      ctx.strokeRect(ptr.x - 28, ptr.y - 28, 56, 56);
+      ctx.restore();
+    }
+  }
+  var raf = 0;
+  function loop(now) { raf = 0; draw(now); if (vis && !RM) raf = requestAnimationFrame(loop); }
+  function kick() { if (RM) draw(performance.now()); else if (!raf) raf = requestAnimationFrame(loop); }
+  desk.addEventListener('pointermove', function (e) {
+    var r = desk.getBoundingClientRect(); ptr = { x: e.clientX - r.left, y: e.clientY - r.top };
+  });
+  desk.addEventListener('pointerleave', function () { ptr = null; });
+  document.addEventListener('visibilitychange', function () { vis = !document.hidden; if (vis) kick(); });
+  var rt;
+  window.addEventListener('resize', function () {
+    clearTimeout(rt); rt = setTimeout(function () { fit(); draw(performance.now()); kick(); }, 140);
+  });
+  var detTimer = 0;
+  function runDetect() {
+    detActive = true; detT0 = performance.now(); ghosts = []; syncChrome(); kick();
+    if (RM) { draw(performance.now()); return; }
+    clearTimeout(detTimer);
+    detTimer = setTimeout(function () { detActive = false; syncChrome(); kick(); }, 9000);
+  }
+
+  /* ══ terminal ════════════════════════════════════════════════ */
+  var reg = {}, help = [], hist = [], hi = -1, qt = [];
+  function ln(html, cls) {
+    var p = document.createElement('p');
+    p.className = 'ln' + (cls ? ' ' + cls : '');
+    p.innerHTML = html;
+    out.appendChild(p); out.scrollTop = out.scrollHeight;
+    return p;
+  }
+  function print(lines, cls) {
+    qt.forEach(clearTimeout); qt = [];
+    if (RM) { lines.forEach(function (l) { ln(l, cls); }); return; }
+    lines.forEach(function (l, i) { qt.push(setTimeout(function () { ln(l, cls); }, i * 48)); });
+  }
+  function setPrompt() {
+    $('#ps').textContent = 'abdullah@lab:' + cwdStr() + '$';
+    $('#cwdLabel').textContent = cwdStr();
+  }
+  function def(names, desc, fn) {
+    names.forEach(function (n, i) { reg[n] = fn; if (i === 0 && desc) help.push([n, desc]); });
+  }
+  function pad(s, n) { s = String(s); while (s.length < n) s += ' '; return s; }
+
+  def(['help', '?'], 'this list', function () {
+    print(['<span class="dim">the site is a filesystem. navigate it.</span>'].concat(help.map(function (h) {
+      return '<span class="c-ml">' + esc(pad(h[0], 17)) + '</span><span class="dim">' + h[1] + '</span>';
+    })), 'pre');
+  });
+  def(['ls'], 'list files  (ls -a)', function (args) {
+    var all = args.indexOf('-a') > -1;
+    var rest = args.filter(function (a) { return a.charAt(0) !== '-'; });
+    var parts = resolve(rest[0] || '.'), node = lookup(parts);
+    if (!node) return print(['<span class="c-sec">ls: ' + esc(rest[0]) + ': no such file or directory</span>']);
+    if (node.type === 'file') return print([esc(node.name)]);
+    print([node.children.filter(function (c) { return all || !c.hidden; }).map(function (c) {
+      var cl = c.type === 'dir' ? 'c-ml' : c.cls === 'f-sec' ? 'c-sec' : c.cls === 'f-cv' ? 'c-cv' : 'dim';
+      return '<span class="' + cl + '">' + esc(c.name) + (c.type === 'dir' ? '/' : '') + '</span>';
+    }).join('&nbsp; &nbsp;')]);
+  });
+  def(['cd'], 'change directory', function (args) {
+    var parts = resolve(args[0] || '~'), node = lookup(parts);
+    if (!node) return print(['<span class="c-sec">cd: ' + esc(args[0]) + ': no such directory</span>']);
+    if (node.type !== 'dir') { openFile(parts.join('/')); return print(['<span class="dim">' + esc(node.name) + ' is a file — opened it</span>']); }
+    cwd = parts; setPrompt(); renderTree();
+    print(['<span class="dim">' + cwdStr() + '</span>']);
+  });
+  def(['pwd'], 'where am i', function () { print(['/home/abdullah/lab' + cwdStr().slice(1)]); });
+  def(['cat'], 'preview a file', function (args) {
+    if (!args[0]) return print(['<span class="dim">usage: cat &lt;file&gt;</span>']);
+    var parts = resolve(args[0]), node = lookup(parts), path = parts.join('/');
+    if (!node) return print(['<span class="c-sec">cat: ' + esc(args[0]) + ': no such file</span>']);
+    if (node.type === 'dir') return print(['<span class="c-sec">cat: ' + esc(node.name) + ': is a directory</span>']);
+    if (node.name === '.flag') return print(['<span class="c-sec">FLAG{tr41n3d_4nd_h4rd3n3d}</span>',
+      '<span class="dim">the only thing here you had to look for.</span>']);
+    var a = tpl[path.toLowerCase()];
+    if (!a) return print(['<span class="dim">binary file — try: open ' + esc(node.name) + '</span>']);
+    print((a.dataset.cat || '').split('|').concat(['<span class="faint">→ open ' + esc(node.name) + '</span>']));
+  });
+  def(['open'], 'open a file in a window', function (args) {
+    if (!args[0]) return print(['<span class="dim">usage: open &lt;file&gt;</span>']);
+    var parts = resolve(args[0]), node = lookup(parts), path = parts.join('/');
+    if (!node) return print(['<span class="c-sec">open: ' + esc(args[0]) + ': no such file</span>']);
+    if (node.type === 'dir') { cwd = parts; setPrompt(); renderTree(); return print(['<span class="dim">' + esc(node.name) + ' is a directory — cd\'d into it</span>']); }
+    if (node.name === '.flag') return print(['<span class="c-sec">open: .flag: permission denied</span>', '<span class="dim">try cat</span>']);
+    if (node.act === 'download') {
+      var a2 = document.createElement('a'); a2.href = 'AbdullahAamirResume.pdf'; a2.download = 'AbdullahAamirResume.pdf';
+      document.body.appendChild(a2); a2.click(); document.body.removeChild(a2);
+      return print(['<span class="c-ok">↓</span> AbdullahAamirResume.pdf — <a href="AbdullahAamirResume.pdf" download>download</a>']);
+    }
+    if (openFile(path)) print(['<span class="dim">opened ' + esc(node.name) + '</span>']);
+    else print(['<span class="c-sec">open: no viewer for ' + esc(node.name) + '</span>']);
+  });
+  def(['tree'], 'the whole map', function () {
+    var lines = ['<span class="c-ml">~</span>'];
+    (function walk(node, pre) {
+      var kids = node.children.filter(function (c) { return !c.hidden; });
+      kids.forEach(function (c, i) {
+        var last = i === kids.length - 1, br = last ? '└── ' : '├── ';
+        var cl = c.type === 'dir' ? 'c-ml' : c.cls === 'f-sec' ? 'c-sec' : c.cls === 'f-cv' ? 'c-cv' : 'dim';
+        lines.push('<span class="faint">' + pre + br + '</span><span class="' + cl + '">' +
+          esc(c.name) + (c.type === 'dir' ? '/' : '') + '</span>');
+        if (c.type === 'dir') walk(c, pre + (last ? '    ' : '│   '));
+      });
+    })(FS, '');
+    print(lines, 'pre');
+  });
+  def(['whoami'], 'identity', function () {
+    print(['muhammad abdullah aamir',
+      '<span class="dim">role   </span>ML Engineer &amp; Security Researcher',
+      '<span class="dim">focus  </span>computer vision · malware detection · siem',
+      '<span class="dim">edu    </span>BSCS, FAST-NUCES · islamabad, pk',
+      '<span class="dim">papers </span>2 &nbsp;<span class="dim">dataset</span> 3,700+ images']);
+  });
+  def(['./detect --self', 'detect'], 'run the detector on me', function () {
+    print(['<span class="dim">input: self · running detector …</span>',
+      '4 objects — <span class="c-ml">ml_researcher 0.98</span> · <span class="c-cv">computer_vision 0.94</span> · <span class="c-sec">security_researcher 0.96</span> · <span class="c-cv">deep_learning 0.91</span>']);
+    runDetect();
+  });
+  def(['nmap -sV skills'], 'scan the toolset', function () { openFile('~/skills.nmap'); print(['<span class="dim">5 services open — opened skills.nmap</span>']); });
+  def(['sudo hire-me'], 'the short version', function () {
+    print(['<span class="c-ok">[sudo]</span> password for abdullah: <span class="dim">********</span>',
+      '<span class="c-ok">granted.</span> open to research roles, internships and collaboration.']);
+    openFile('~/contact.json');
+  });
+  def(['exit', 'close'], 'close all windows', function () {
+    Object.keys(wins).forEach(closeWin);
+    print(['<span class="dim">all windows closed</span>']);
+  });
+  def(['clear'], 'clear the screen', function () { qt.forEach(clearTimeout); out.innerHTML = ''; });
+  def(['banner'], null, function () {
+    print(['┌──────────────────────────────────┐',
+      '│ M. ABDULLAH AAMIR                │',
+      '│ ml &amp; security researcher         │',
+      '│ vision · malware · disclosure    │',
+      '└──────────────────────────────────┘'], 'pre');
+  });
+  def(['history'], null, function () {
+    print(hist.length ? hist.map(function (h, i) { return '<span class="faint">' + (i + 1) + '</span>  ' + esc(h); })
+      : ['<span class="dim">nothing yet</span>'], 'pre');
+  });
+  def(['date'], null, function () { print([new Date().toString()]); });
+
+  /* ── toasts ─────────────────────────────────────────────── */
+  var toasts = $('#toasts');
+  function toast(html, ac, ms) {
+    var t = document.createElement('div');
+    t.className = 'toast'; t.style.setProperty('--ac', ac || 'var(--cls-ml)');
+    t.innerHTML = '<span>' + html + '</span><button class="tx" aria-label="Dismiss">✕</button>';
+    var kill = function () {
+      t.classList.add('out');
+      setTimeout(function () { if (t.parentNode) t.parentNode.removeChild(t); }, RM ? 0 : 260);
+    };
+    $('.tx', t).addEventListener('click', kill);
+    toasts.appendChild(t);
+    setTimeout(kill, ms || 7000);
+  }
+
+  /* ── neofetch ───────────────────────────────────────────── */
+  function nfBody() {
+    return '<div class="win-body"><div class="nf">' +
+      '<img class="av" src="avatar.png" alt="" width="104" height="104" />' +
+      '<dl>' +
+      '<dt>host</dt><dd>abdullah@lab</dd>' +
+      '<dt>role</dt><dd>ML Engineer &amp; Security Researcher</dd>' +
+      '<dt>os</dt><dd>lab-os · one static file, no build</dd>' +
+      '<dt>shell</dt><dd>/bin/abdullah-sh</dd>' +
+      '<dt>uptime</dt><dd><span data-nf-up>00:00:00</span></dd>' +
+      '<dt>langs</dt><dd>python · c/c++ · bash · sql · php · js</dd>' +
+      '<dt>ml</dt><dd>pytorch · sklearn · xgboost · lightgbm · yolov8</dd>' +
+      '<dt>sec</dt><dd>wazuh · yara · opnsense · burp · metasploit</dd>' +
+      '<dt>papers</dt><dd>2 <span class="faint">(1 in prep · 1 in progress)</span></dd>' +
+      '<dt>dataset</dt><dd>pk-transport-3.7k <span class="faint">(3,700+ imgs)</span></dd>' +
+      '<dt>edu</dt><dd>bscs · fast-nuces · islamabad, pk</dd>' +
+      '</dl></div></div>';
+  }
+  def(['neofetch'], 'system info card', function () {
+    buildWin('cmd:neofetch', 'neofetch', 'var(--cls-ml)', nfBody());
+  });
+
+  /* ── htop ───────────────────────────────────────────────── */
+  var PROCS = [
+    { pid: 2181, n: 'yolov8-infer', c: 'cv', lo: 48, hi: 74 },
+    { pid: 1442, n: 'xgb-ensemble', c: '', lo: 22, hi: 46 },
+    { pid: 1207, n: 'lgbm-calibrate', c: '', lo: 12, hi: 30 },
+    { pid: 907, n: 'wazuh-agent', c: 'sec', lo: 8, hi: 22 },
+    { pid: 812, n: 'yara-scan[5029]', c: 'sec', lo: 26, hi: 58 },
+    { pid: 655, n: 'n8n-worker', c: 'sec', lo: 3, hi: 12 },
+    { pid: 402, n: 'cvat-annotate', c: 'cv', lo: 5, hi: 18 }
+  ];
+  def(['htop', 'top'], 'live process monitor', function () {
+    var body = '<div class="win-body"><div class="htop">' +
+      '<div class="hdr"><span>pid</span><span>process</span><span>cpu</span><span>%</span></div>' +
+      PROCS.map(function (p) {
+        return '<div class="prow ' + p.c + '"><span class="pid">' + p.pid + '</span>' +
+          '<span class="pname">' + esc(p.n) + '</span>' +
+          '<span class="hbar"><i></i></span><span class="pct">0%</span></div>';
+      }).join('') +
+      '<p class="load">load <span data-load>0.00 0.00 0.00</span> · 7 tasks · <span class="c-ok">detector online</span></p>' +
+      '<p class="foot">synthetic monitor — this is a portfolio, not a production node</p>' +
+      '</div></div>';
+    var timer = 0;
+    var el = buildWin('cmd:htop', 'htop', 'var(--cls-ml)', body, function () { clearInterval(timer); });
+    if (!el) return;
+    var bars = $$('.htop .prow', el), load = $('[data-load]', el);
+    var tick = function () {
+      bars.forEach(function (row, i) {
+        var p = PROCS[i], v = Math.round(p.lo + Math.random() * (p.hi - p.lo));
+        $('.hbar i', row).style.width = v + '%';
+        $('.pct', row).textContent = v + '%';
+      });
+      if (load) load.textContent = [0, 1, 2].map(function (k) {
+        return (0.6 + Math.random() * 1.1 - k * 0.18).toFixed(2); }).join(' ');
+    };
+    tick();
+    if (!RM) timer = setInterval(tick, 900);
+  });
+
+  /* ── grep across the filesystem ─────────────────────────── */
+  def(['grep', 'find'], 'grep <term> — search files', function (args) {
+    var q = (args || []).join(' ').replace(/^-i\s*/, '').trim();
+    if (!q) return print(['<span class="dim">usage: grep &lt;term&gt;</span>']);
+    var hits = [];
+    Object.keys(tpl).forEach(function (k) {
+      var a = tpl[k], txt = a.textContent.replace(/\s+/g, ' ');
+      var i = txt.toLowerCase().indexOf(q.toLowerCase());
+      if (i < 0) return;
+      var snip = txt.slice(Math.max(0, i - 26), i + q.length + 34).trim();
+      hits.push('<span class="c-ml">' + esc(k.replace(/^~\//, '')) + '</span>' +
+        '<span class="dim">: …' + esc(snip) + '…</span>');
+    });
+    print(hits.length ? hits.concat(['<span class="faint">' + hits.length + ' file(s) — open one to read it</span>'])
+      : ['<span class="c-sec">grep: no match for ' + esc(q) + '</span>']);
+  });
+
+  var NAMES = Object.keys(reg);
+  function runCmd(raw, echo) {
+    var cmd = String(raw).trim().replace(/\s+/g, ' ');
+    if (!cmd) return;
+    if (echo !== false) ln('<span class="c-ok">abdullah@lab</span>:' + cwdStr() + '$ ' + esc(cmd));
+    hist.push(cmd); hi = hist.length;
+    var direct = reg[cmd] || reg[cmd.toLowerCase()];
+    if (direct) return direct([]);
+    var bits = cmd.split(' '), fn = reg[bits[0].toLowerCase()];
+    if (fn) return fn(bits.slice(1));
+    ln('<span class="c-sec">command not found: ' + esc(bits[0]) + '</span> <span class="dim">— try \'help\'</span>');
+  }
+  input.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { runCmd(input.value); input.value = ''; }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); if (hi > 0) input.value = hist[--hi]; }
+    else if (e.key === 'ArrowDown') { e.preventDefault(); if (hi < hist.length - 1) input.value = hist[++hi]; else { hi = hist.length; input.value = ''; } }
+    else if (e.key === 'Tab') {
+      e.preventDefault();
+      var v = input.value, low = v.toLowerCase(), bits = v.split(' ');
+      var pool, prefix = '';
+      if (bits.length > 1 && /^(cd|cat|open|ls)$/.test(bits[0].toLowerCase())) {
+        var node = lookup(cwd);
+        pool = (node && node.children || []).map(function (c) { return c.name + (c.type === 'dir' ? '/' : ''); });
+        prefix = bits.slice(0, -1).join(' ') + ' ';
+        low = bits[bits.length - 1].toLowerCase();
+      } else { pool = NAMES; }
+      var m = pool.filter(function (n) { return n.toLowerCase().indexOf(low) === 0; });
+      if (!m.length) return;
+      if (m.length === 1) { input.value = prefix + m[0]; return; }
+      var p = m[0];
+      m.forEach(function (n) { while (n.toLowerCase().indexOf(p.toLowerCase()) !== 0) p = p.slice(0, -1); });
+      input.value = prefix + p;
+      print([m.map(function (n) { return '<span class="c-ml">' + esc(n) + '</span>'; }).join('&nbsp; ')]);
+    }
+  });
+  $$('#chips button').forEach(function (b) {
+    b.addEventListener('click', function () { runCmd(b.dataset.cmd); if (!isPhone()) input.focus(); });
+  });
+  $('#detectBtn').addEventListener('click', function () { runCmd('./detect --self'); });
+
+  /* ══ chrome: burger, minimise, uptime ════════════════════════ */
+  var side = $('#side'), burger = $('#burger'), scrim = null;
+  function closeSide() {
+    side.classList.remove('open'); burger.setAttribute('aria-expanded', 'false');
+    if (scrim) { scrim.remove(); scrim = null; }
+  }
+  burger.addEventListener('click', function () {
+    var open = !side.classList.contains('open');
+    side.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) {
+      scrim = document.createElement('div'); scrim.className = 'scrim';
+      scrim.addEventListener('click', closeSide);
+      $('#os').appendChild(scrim);
+    } else closeSide();
+  });
+  var term = $('#term'), minBtn = $('#minBtn');
+  minBtn.addEventListener('click', function () {
+    var min = term.classList.toggle('min');
+    minBtn.textContent = min ? 'shell' : 'minimise';
+    minBtn.setAttribute('aria-expanded', min ? 'false' : 'true');
+    setTimeout(function () { fit(); kick(); }, 250);
+  });
+  /* ── right-click desktop menu ───────────────────────────── */
+  var ctxEl = null;
+  function closeCtx() { if (ctxEl && ctxEl.parentNode) ctxEl.parentNode.removeChild(ctxEl); ctxEl = null; }
+  var CTX = [
+    ['≡', 'open README.md', 'open README.md'],
+    ['◎', './detect --self', './detect --self'],
+    ['»', 'neofetch', 'neofetch'],
+    ['▤', 'htop', 'htop'],
+    [null, null, null],
+    ['⌘', 'tree', 'tree'],
+    ['✕', 'close all windows', 'exit']
+  ];
+  desk.addEventListener('contextmenu', function (e) {
+    if (e.target.closest('.win')) return;
+    e.preventDefault(); closeCtx();
+    var r = desk.getBoundingClientRect();
+    ctxEl = document.createElement('div');
+    ctxEl.className = 'ctx';
+    ctxEl.setAttribute('role', 'menu');
+    CTX.forEach(function (item) {
+      if (!item[0]) { ctxEl.appendChild(document.createElement('hr')); return; }
+      var b = document.createElement('button');
+      b.setAttribute('role', 'menuitem');
+      b.innerHTML = '<span class="gl">' + item[0] + '</span>' + esc(item[1]);
+      b.addEventListener('click', function () { closeCtx(); runCmd(item[2], true); });
+      ctxEl.appendChild(b);
+    });
+    ctxEl.style.left = Math.min(e.clientX - r.left, Math.max(0, r.width - 210)) + 'px';
+    ctxEl.style.top = Math.min(e.clientY - r.top, Math.max(0, r.height - 250)) + 'px';
+    desk.appendChild(ctxEl);
+  });
+  document.addEventListener('pointerdown', function (e) {
+    if (ctxEl && !e.target.closest('.ctx')) closeCtx();
+  });
+
+  /* ── shortcuts + shareable links ────────────────────────── */
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeCtx();
+    if (!(e.ctrlKey || e.metaKey)) return;
+    if (e.key === 'k' || e.key === 'K') { e.preventDefault(); input.focus(); }
+    if (e.key === 'l' || e.key === 'L') { e.preventDefault(); runCmd('clear', true); }
+  });
+  function fromHash() {
+    var m = /[#&]f=([^&]+)/.exec(location.hash || '');
+    if (!m) return false;
+    var p = '~/' + decodeURIComponent(m[1]).replace(/^~?\/*/, '');
+    return openFile(p);
+  }
+  $('#avBtn').addEventListener('click', function () { runCmd('open README.md', true); });
+
+  var t0 = Date.now(), upEl = $('#up');
+  setInterval(function () {
+    var s = Math.floor((Date.now() - t0) / 1000), p = function (n) { return (n < 10 ? '0' : '') + n; };
+    var str = p(Math.floor(s / 3600)) + ':' + p(Math.floor(s / 60) % 60) + ':' + p(s % 60);
+    upEl.textContent = str;
+    $$('[data-nf-up]').forEach(function (n) { n.textContent = str; });
+  }, 1000);
+
+  /* ══ boot ════════════════════════════════════════════════════ */
+  var BOOT = [
+    '<span class="c-ok">abdullah@lab</span>:~$ ./init --role "ML Engineer &amp; Security Researcher"',
+    '<span class="c-ok">[ ok ]</span> <span class="dim">models ....</span> xgboost · lightgbm · random_forest',
+    '<span class="c-ok">[ ok ]</span> <span class="dim">datasets ..</span> ember2018 · bodmas · ember2024 · pk-transport-3.7k',
+    '<span class="c-sec">[warn]</span> <span class="dim">scope .....</span> authorized-only · responsible-disclosure',
+    '<span class="dim">mounted ~/lab — type <span class="c-ml">help</span>, or tap a file</span>'
+  ];
+  var POST = [
+    '<span class="c-ml">lab-os</span> <span class="faint">· post</span>',
+    '<span class="c-ok">[ ok ]</span> cpu ........ 8 cores',
+    '<span class="c-ok">[ ok ]</span> cuda ....... available',
+    '<span class="c-ok">[ ok ]</span> mount ...... ~/lab',
+    '<span class="c-ok">[ ok ]</span> models ..... 3 ensembles · 6 formats',
+    '<span class="c-ok">[ ok ]</span> identity ... abdullah aamir'
+  ];
+  var post = $('#post'), postLines = $('#postLines'), postDone = false;
+  function endPost() {
+    if (postDone) return;
+    postDone = true;
+    post.classList.add('done');
+    setTimeout(function () { if (post.parentNode) post.parentNode.removeChild(post); }, RM ? 0 : 420);
+    input.focus({ preventScroll: true });
+  }
+  post.addEventListener('click', endPost);
+  window.addEventListener('keydown', function (e) { if (!postDone && e.key !== 'Tab') endPost(); });
+
+  setPrompt(); renderTree(); fit(); kick();
+  function land() { if (!fromHash()) openFile('~/README.md'); }
+  if (RM) {
+    POST.forEach(function (l) { var p = document.createElement('p'); p.className = 'ln'; p.innerHTML = l; postLines.appendChild(p); });
+    endPost();
+    BOOT.forEach(function (l) { ln(l); });
+    runDetect(); land();
+  } else {
+    POST.forEach(function (l, i) {
+      setTimeout(function () {
+        if (postDone) return;
+        var p = document.createElement('p'); p.className = 'ln'; p.innerHTML = l; postLines.appendChild(p);
+      }, 170 * i + 90);
+    });
+    setTimeout(endPost, 1420);
+    BOOT.forEach(function (l, i) { setTimeout(function () { ln(l); }, 150 * i + 1500); });
+    setTimeout(runDetect, 1700);
+    setTimeout(land, 2600);
+    setTimeout(function () {
+      toast('<b>[wazuh]</b> rule 5710 · eicar test sample quarantined — verdict in <b>277 ms</b>', 'var(--cls-sec)', 9000);
+    }, 7200);
+    setTimeout(function () {
+      toast('<b>[detector]</b> 6 formats armed · win32 · win64 · .net · elf · pdf · apk', 'var(--cls-ml)', 9000);
+    }, 15000);
+  }
+})();
+</script>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"Person",
+  "name":"Muhammad Abdullah Aamir",
+  "jobTitle":"ML Engineer & Security Researcher",
+  "url":"https://abdullahaamir13.github.io/",
+  "email":"mailto:abdullahaamir977@gmail.com",
+  "telephone":"+923360962785",
+  "address":{"@type":"PostalAddress","addressLocality":"Islamabad","addressCountry":"PK"},
+  "alumniOf":{"@type":"CollegeOrUniversity","name":"National University of Computer & Emerging Sciences (FAST-NUCES)"},
+  "knowsAbout":["Computer Vision","Malware Detection","Machine Learning","Security Research","YOLOv8","Wazuh","YARA","Responsible Disclosure"],
+  "sameAs":["https://github.com/abdullahaamir13","https://www.linkedin.com/in/abdullah-aamir"]
+}
+</script>
+</body>
+</html>
