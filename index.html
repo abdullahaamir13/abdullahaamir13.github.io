@@ -528,7 +528,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
     <div class="btnrow">
       <a class="btn pri" href="mailto:abdullahaamir977@gmail.com">email</a>
       <a class="btn" href="https://wa.me/923360962785" target="_blank" rel="noopener">whatsapp</a>
-      <a class="btn" href="AbdullahAamirResume.pdf" download>résumé.pdf</a>
+      <a class="btn" href="AbdullahAamirResume.pdf" download>resume.pdf</a>
     </div>
     <div class="blk">{
   "email" : "abdullahaamir977@gmail.com",
@@ -1316,6 +1316,14 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   "knowsAbout":["Computer Vision","Malware Detection","Machine Learning","Security Research","YOLOv8","Wazuh","YARA","Responsible Disclosure"],
   "sameAs":["https://github.com/abdullahaamir13","https://www.linkedin.com/in/abdullah-aamir"]
 }
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  try {
+    var sel = document.querySelectorAll('a[href="AbdullahAamirResume.pdf"]');
+    sel.forEach(function (a) { a.setAttribute('download', 'résumé.pdf'); });
+  } catch (e) { /* noop */ }
+});
 </script>
 </body>
 </html>
